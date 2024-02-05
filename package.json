@@ -1,0 +1,37 @@
+{
+  "name": "valentin",
+  "version": "1.0.0",
+  "repository": "https://github.com/euregan/valentin",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "Valentin Manceaux-Panot <valentin@mcxp.io>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/react": "^18.2.51",
+    "@types/react-dom": "^18.2.18",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "jsonwebtoken": "*",
+    "next": "*",
+    "react": "*",
+    "zod": "*"
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist",
+    "package.json"
+  ],
+  "keywords": [
+    "utilities",
+    "react",
+    "hooks",
+    "focused"
+  ]
+}
