@@ -1,12 +1,13 @@
 {
   "name": "valentin",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "repository": "https://github.com/euregan/valentin",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "release": "npm run build && npm publish"
   },
   "author": "Valentin Manceaux-Panot <valentin@mcxp.io>",
   "license": "ISC",
@@ -26,7 +27,9 @@
     "README.md",
     "LICENSE",
     "dist",
-    "package.json"
+    "src",
+    "package.json",
+    "tsconfig.json"
   ],
   "keywords": [
     "utilities",

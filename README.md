@@ -1,3 +1,3 @@
 # Valentin
 
-A collection of utility functions to share across projects.
+A collection of utilities to share across projects.
