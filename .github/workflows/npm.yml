@@ -17,6 +17,8 @@ jobs:
           node-version: 18
           cache: "npm"
           registry-url: "https://registry.npmjs.org"
+      - name: Install dependencies
+        run: npm install
       - name: Publish
         run: npm run release
         env:
