@@ -1,7 +1,7 @@
-import { JwtUser } from "./jwt";
-import jwt from "./jwt";
+import { JwtUser } from "../jwt";
+import jwt from "../jwt";
 import type { NextApiRequest, NextApiResponse } from "next";
-import Result from "./Result";
+import Result from "../Result";
 import { z, ZodSchema } from "zod";
 
 /**
