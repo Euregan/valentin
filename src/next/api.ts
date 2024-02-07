@@ -137,7 +137,7 @@ type MutationResult<Payload, Data> =
 /**
  * A hook to send data to the API. This will make either a `POST`, `PUT` or `DELETE` request.
  *
- * @param url The URL to call. You need to include the /api prefix.
+ * @param url The URL to call. You need to include the /api prefix. It can also be a function returning the actual URL to call.
  * @param method The HTTP verb to use. Defaults to `POST`
  * @returns This hook returns an array containing four values:
  *    - First is a function to send data to the API. It returns a promise that will contain the data returned from the API (if it resolves)
@@ -146,7 +146,7 @@ type MutationResult<Payload, Data> =
  *    - Finally, either `null` (if there was an error or if the resquest is still running), or the expected `Data`
  */
 export const useMutation = <Payload, Data = never>(
-  url: string,
+  url: string | ((payload: Payload) => string),
   method: Method = "POST"
 ): MutationResult<Payload, Data> => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -160,7 +160,11 @@ export const useMutation = <Payload, Data = never>(
     }
 
     setLoading(true);
-    return api<Data, Payload>(url, method, payload)
+    return api<Data, Payload>(
+      typeof url === "string" ? url : url(payload),
+      method,
+      payload
+    )
       .then((data) => {
         setData(data);
         setLoading(false);
