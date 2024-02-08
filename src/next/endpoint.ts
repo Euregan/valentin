@@ -119,9 +119,10 @@ export const authentifiedGenerator =
  *  A helper for unauthenticated endpoints
  *
  * @param handler The function to handle the call. It will only
- *    be called if the data sent is valid. It is given on parameter,
- *    the payload of the call (if applicable). It has been parsed
+ *    be called if the data sent is valid. It is given two parameters:
+ *    - The first is the payload of the call (if applicable). It has been parsed
  *    according to the provided validator.
+ *    - The second is the user making the call, if there is one.
  * @param validator A zod validation schema to validate incoming data.
  *    Route parameters, URL parameters and JSON body will be merged
  *    together. If you do not expect data, you do not have to pass a
@@ -129,7 +130,10 @@ export const authentifiedGenerator =
  */
 export const visitor =
   <ValidationSchema extends ZodSchema, R>(
-    handler: (payload: z.infer<ValidationSchema>) => Promise<Result<R, Error>>,
+    handler: (
+      payload: z.infer<ValidationSchema>,
+      user?: JwtUser
+    ) => Promise<Result<R, Error>>,
     validator?: ValidationSchema
   ) =>
   (request: NextApiRequest): Promise<Result<R, Error>> => {
@@ -152,7 +156,10 @@ export const visitor =
       }
     }
 
-    return handler(payload);
+    const token = request.cookies["jwt"];
+    const user: JwtUser | undefined = token ? jwt.read(token) : undefined;
+
+    return handler(payload, user);
   };
 
 type Endpoints<Get, Post, Put, Delete> = {
