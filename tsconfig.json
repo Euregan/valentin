@@ -3,9 +3,10 @@
     "module": "nodenext",
     "target": "es2020",
     "declaration": true,
-    "outDir": "./dist",
+    "outDir": ".",
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": []
 }
