@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * If the API throws an error, it is passed back through this type.
@@ -49,22 +49,24 @@ export const api = <Response, Payload>(
 type Result<Data> =
   /**
    * If the call is still running, then it returns a simple array
-   * with `true` as the first element. The two other elements are
-   * `null`.
+   * with `true` as the first element. The next two elements are
+   * `null`. The last element is a function to fetch the data again.
    */
-  | [true, null, null]
+  | [true, null, null, () => Promise<Data>]
   /**
    * If the call has errored, the array contains `false` as the
    * loading variable, then the error that happened, and finally
-   * `null` for the result.
+   * `null` for the result. The last element is a function to fetch
+   * the data again.
    */
-  | [false, Err, null]
+  | [false, Err, null, () => Promise<Data>]
   /**
    * If the call has come through, the array contains `false` as the
    * loading variable, `null` for the error, and finally the data
-   * returned by the API.
+   * returned by the API. The last element is a function to fetch the
+   * data again.
    */
-  | [false, null, Data];
+  | [false, null, Data, () => Promise<Data>];
 
 /**
  * A hook to fetch data from the API. This will make a GET request.
@@ -80,28 +82,38 @@ export const useQuery = <Data>(url: string): Result<Data> => {
   const [data, setData] = useState<Data | null>(null);
   const router = useRouter();
 
+  const call = useCallback(
+    () =>
+      api<Data, never>(url, "GET")
+        .then((data) => {
+          setData(data);
+
+          return data;
+        })
+        .catch((error: Err) => {
+          if (error.status === 401) {
+            router.push("/signin");
+          }
+          setError(error);
+
+          throw error;
+        }),
+    [url]
+  );
+
   useEffect(() => {
-    api<Data, never>(url, "GET")
-      .then((data) => {
-        setData(data);
-      })
-      .catch((error: Err) => {
-        if (error.status === 401) {
-          router.push("/signin");
-        }
-        setError(error);
-      });
+    call();
   }, [url]);
 
   if (error) {
-    return [false, error, null];
+    return [false, error, null, call];
   }
 
   if (data) {
-    return [false, null, data];
+    return [false, null, data, call];
   }
 
-  return [true, null, null];
+  return [true, null, null, call];
 };
 
 type Method = "POST" | "PUT" | "DELETE";
