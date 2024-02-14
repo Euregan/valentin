@@ -29,8 +29,8 @@
     "src",
     "package.json",
     "tsconfig.json",
-    "*.js",
-    "*.d.ts"
+    "**/*.js",
+    "**/*.d.ts"
   ],
   "keywords": [
     "utilities",
