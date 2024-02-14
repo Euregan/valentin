@@ -26,10 +26,11 @@
   "files": [
     "README.md",
     "LICENSE",
-    "dist",
     "src",
     "package.json",
-    "tsconfig.json"
+    "tsconfig.json",
+    "*.js",
+    "*.d.ts"
   ],
   "keywords": [
     "utilities",
