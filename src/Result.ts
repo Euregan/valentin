@@ -53,7 +53,10 @@ export default class Result<Data, Error> {
    * @param failure The function to be called if the Result has failed
    * @returns Either the successful data or the transformed error
    */
-  unwrap = <T, U>(success: (data: Data) => T, failure: (error: Error) => U) =>
+  unwrap = <T, U>(
+    success: (data: Data) => T,
+    failure: (error: Error) => U
+  ): T | U =>
     this.internal.ok
       ? success(this.internal.data)
       : failure(this.internal.error);
