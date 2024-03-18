@@ -114,7 +114,7 @@ export const visitor =
     if (validator) {
       const validation = validator.safeParse({
         ...request.body,
-        ...request.nextUrl.searchParams,
+        ...Object.fromEntries(request.nextUrl.searchParams.entries()),
         ...params,
       });
       if (validation.success) {
