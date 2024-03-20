@@ -1,6 +1,6 @@
 {
   "name": "valentin",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "repository": "https://github.com/euregan/valentin",
   "main": "index.js",
   "types": "index.d.ts",
