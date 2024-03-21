@@ -41,7 +41,7 @@ export const authentified =
   ) =>
   async (
     request: NextRequest,
-    params: Record<string, string>
+    params: { params: Record<string, string> }
   ): Promise<Response> => {
     const apiKey =
       request.headers.has("authorization") &&
@@ -107,7 +107,7 @@ export const visitor =
   ) =>
   async (
     request: NextRequest,
-    params: Record<string, string>
+    { params }: { params: Record<string, string> }
   ): Promise<Response> => {
     let payload: z.infer<ValidationSchema> = undefined;
 
