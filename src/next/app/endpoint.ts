@@ -112,8 +112,14 @@ export const visitor =
     let payload: z.infer<ValidationSchema> = undefined;
 
     if (validator) {
+      let body = {};
+      try {
+        // If there is no body, this will fail, but this is fine
+        body = await request.json();
+      } catch (error) {}
+
       const validation = validator.safeParse({
-        ...(await request.json()),
+        ...body,
         ...Object.fromEntries(request.nextUrl.searchParams.entries()),
         ...params,
       });
