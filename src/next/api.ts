@@ -116,7 +116,7 @@ export const useQuery = <Data>(url: string): Result<Data> => {
   return [true, null, null, call];
 };
 
-type Method = "POST" | "PUT" | "DELETE";
+type Method = "POST" | "PUT" | "DELETE" | "GET";
 
 /**
  * The type returned by the `useMutation` hook. The first element of
@@ -175,7 +175,7 @@ export const useMutation = <Payload, Data = never>(
     return api<Data, Payload>(
       typeof url === "string" ? url : url(payload),
       method,
-      payload
+      method !== "GET" ? payload : undefined
     )
       .then((data) => {
         setData(data);
