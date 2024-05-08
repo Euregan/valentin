@@ -29,7 +29,7 @@ interface HookParameters<Data> {
    *
    * @param data The validated data from the form.
    */
-  onSubmit: (data: Data) => void;
+  onSubmit: (data: Data) => void | Promise<void>;
 }
 
 interface Form<Data, OnChanges, Errors> {
@@ -51,6 +51,14 @@ interface Form<Data, OnChanges, Errors> {
    * An object containing the validation errors of your form.
    */
   errors: Errors;
+  /**
+   * Any error returned by the onSubmit call
+   */
+  submitError: string | null;
+  /**
+   * Whether the onSubmit call is running or not
+   */
+  submitting: boolean;
 }
 
 /**
@@ -87,6 +95,9 @@ export const createFormHook = <Validation extends Record<string, Schema>>(
     const [data, setData] = useState(initialData);
     const [errors, setErrors] = useState<Errors>(emptyErrors);
 
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<null | string>(null);
+
     const schema = z.object(validation);
 
     const onChanges = Object.fromEntries(
@@ -106,7 +117,15 @@ export const createFormHook = <Validation extends Record<string, Schema>>(
 
       if (validation.success) {
         setErrors(emptyErrors);
-        onSubmit(validation.data);
+        const maybeAPromise = onSubmit(validation.data);
+
+        if (maybeAPromise && "then" in maybeAPromise) {
+          setSubmitting(true);
+          setSubmitError(null);
+          maybeAPromise
+            .catch((error) => setSubmitError(error))
+            .finally(() => setSubmitting(false));
+        }
       } else {
         setErrors(
           Object.fromEntries(
@@ -124,6 +143,8 @@ export const createFormHook = <Validation extends Record<string, Schema>>(
       onChanges,
       values: data,
       errors,
+      submitError,
+      submitting,
     };
   };
 };
@@ -144,7 +165,7 @@ type NeoHookParameters<Validation, Data> = {
    *
    * @param data The validated data from the form.
    */
-  onSubmit: (data: Data) => void;
+  onSubmit: (data: Data) => void | Promise<void>;
 };
 
 /**
@@ -175,6 +196,9 @@ export const useForm = <T extends object>({
       emptyErrors
     );
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<null | string>(null);
+
   const onChanges = Object.fromEntries(
     (
       Object.entries(initialData) as Array<
@@ -201,7 +225,15 @@ export const useForm = <T extends object>({
 
     if (validation.success) {
       setErrors(emptyErrors);
-      onSubmit(validation.data);
+      const maybeAPromise = onSubmit(validation.data);
+
+      if (maybeAPromise && "then" in maybeAPromise) {
+        setSubmitting(true);
+        setSubmitError(null);
+        maybeAPromise
+          .catch((error) => setSubmitError(error))
+          .finally(() => setSubmitting(false));
+      }
     } else {
       setErrors(
         Object.fromEntries(
@@ -219,5 +251,7 @@ export const useForm = <T extends object>({
     onChanges,
     values: data,
     errors,
+    submitError,
+    submitting,
   };
 };
