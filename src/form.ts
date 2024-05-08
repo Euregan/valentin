@@ -231,7 +231,7 @@ export const useForm = <T extends object>({
         setSubmitting(true);
         setSubmitError(null);
         maybeAPromise
-          .catch((error) => setSubmitError(error))
+          .catch((error) => setSubmitError(error.message))
           .finally(() => setSubmitting(false));
       }
     } else {
